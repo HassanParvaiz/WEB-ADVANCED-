@@ -1,24 +1,37 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+const API_URL = 'https://pokeapi.co/api/v2/pokemon?offset=100&limit=20';
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+async function haalPokemonDataOp() {
+  try {
+    const antwoord = await fetch(API_URL);
+    const basisData = await antwoord.json();
 
-setupCounter(document.querySelector('#counter'))
+    const volledigePokemonLijst = await Promise.all(
+      basisData.results.map(async (pokemon) => {
+        const detailAntwoord = await fetch(pokemon.url);
+        return await detailAntwoord.json();
+      })
+    );
+
+    return volledigePokemonLijst;
+  } catch (fout) {
+    console.error('Kon Pokémon niet ophalen:', fout);
+    return [];
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const pokedex = await haalPokemonDataOp();
+  const container = document.getElementById('pokemon-container');
+
+  pokedex.forEach(p => {
+    const kaart = document.createElement('div');
+    kaart.classList.add('pokemon-kaart');
+
+    kaart.innerHTML = `
+      <h3>${p.name}</h3>
+      <img src="${p.sprites.front_default}" alt="${p.name}">
+    `;
+
+    container.appendChild(kaart);
+  });
+});
