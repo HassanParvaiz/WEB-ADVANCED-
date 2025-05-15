@@ -22,16 +22,39 @@ async function haalPokemonDataOp() {
 document.addEventListener('DOMContentLoaded', async () => {
   const pokedex = await haalPokemonDataOp();
   const container = document.getElementById('pokemon-container');
+  const controls = document.getElementById('controls');
 
-  pokedex.forEach(p => {
-    const kaart = document.createElement('div');
-    kaart.classList.add('pokemon-kaart');
+  // Zoekveld 
+  const zoekInput = document.createElement('input');
+  zoekInput.type = 'text';
+  zoekInput.placeholder = 'Zoek op naam...';
+  zoekInput.id = 'zoekveld';
+  controls.appendChild(zoekInput);
 
-    kaart.innerHTML = `
-      <h3>${p.name}</h3>
-      <img src="${p.sprites.front_default}" alt="${p.name}">
-    `;
+  // Functie om kaarten weer te geven
+  function toonPokemonLijst(lijst) {
+    container.innerHTML = '';
+    lijst.forEach(p => {
+      const kaart = document.createElement('div');
+      kaart.classList.add('pokemon-kaart');
 
-    container.appendChild(kaart);
+      kaart.innerHTML = `
+        <h3>${p.name}</h3>
+        <img src="${p.sprites.front_default}" alt="${p.name}">
+      `;
+
+      container.appendChild(kaart);
+    });
+  }
+
+  // Toon alle Pokémon 
+  toonPokemonLijst(pokedex);
+
+  // Zoekfunctionaliteit
+  zoekInput.addEventListener('input', () => {
+    const zoekterm = zoekInput.value.toLowerCase();
+    const gefilterdePokemons = pokedex.filter(p => p.name.toLowerCase().includes(zoekterm));
+    toonPokemonLijst(gefilterdePokemons);
   });
 });
+
