@@ -1,5 +1,16 @@
 const API_URL = 'https://pokeapi.co/api/v2/pokemon?offset=100&limit=20';
 
+// ⬇️ Favorieten ophalen uit localStorage
+function getFavorieten() {
+  return JSON.parse(localStorage.getItem('favorieten')) || [];
+}
+
+// ⬆️ Favorieten opslaan
+function setFavorieten(favorieten) {
+  localStorage.setItem('favorieten', JSON.stringify(favorieten));
+}
+
+// Haal data op
 async function haalPokemonDataOp() {
   try {
     const antwoord = await fetch(API_URL);
@@ -23,6 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const pokedex = await haalPokemonDataOp();
   const container = document.getElementById('pokemon-container');
   const controls = document.getElementById('controls');
+  let favorieten = getFavorieten(); // Laad huidige favorieten
 
   // Zoekveld
   const zoekInput = document.createElement('input');
@@ -31,15 +43,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   zoekInput.id = 'zoekveld';
   controls.appendChild(zoekInput);
 
-
+  // Type filter dropdown
   const typeSelect = document.createElement('select');
   typeSelect.id = 'type-filter';
 
-  // Haal unieke types op
   const alleTypes = new Set();
   pokedex.forEach(p => p.types.forEach(t => alleTypes.add(t.type.name)));
 
-  // Voeg opties toe aan dropdown
   const defaultOptie = document.createElement('option');
   defaultOptie.value = '';
   defaultOptie.textContent = 'Alle types';
@@ -54,6 +64,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   controls.appendChild(typeSelect);
 
+  // Favoriet toggle
+  function toggleFavoriet(pokemonNaam) {
+    if (favorieten.includes(pokemonNaam)) {
+      favorieten = favorieten.filter(naam => naam !== pokemonNaam);
+    } else {
+      favorieten.push(pokemonNaam);
+    }
+    setFavorieten(favorieten);
+    filterLijst(); // Herteken de lijst
+  }
+
   // Toon kaarten
   function toonPokemonLijst(lijst) {
     container.innerHTML = '';
@@ -61,13 +82,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       const kaart = document.createElement('div');
       kaart.classList.add('pokemon-kaart');
 
+      const isFavoriet = favorieten.includes(p.name);
+      const hartje = isFavoriet ? '❤️' : '🤍';
+
       kaart.innerHTML = `
         <h3>${p.name}</h3>
         <img src="${p.sprites.front_default}" alt="${p.name}">
         <p>Type: ${p.types.map(t => t.type.name).join(', ')}</p>
+        <button class="favoriet-btn" data-naam="${p.name}">${hartje}</button>
       `;
 
       container.appendChild(kaart);
+    });
+
+    // Koppel events aan hartjes
+    document.querySelectorAll('.favoriet-btn').forEach(knop => {
+      knop.addEventListener('click', (e) => {
+        const naam = e.target.getAttribute('data-naam');
+        toggleFavoriet(naam);
+      });
     });
   }
 
@@ -84,7 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     toonPokemonLijst(gefilterd);
   }
 
-  
+  // Toon de initiële lijst
   toonPokemonLijst(pokedex);
 
   // Events
