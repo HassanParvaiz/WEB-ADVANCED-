@@ -24,14 +24,37 @@ document.addEventListener('DOMContentLoaded', async () => {
   const container = document.getElementById('pokemon-container');
   const controls = document.getElementById('controls');
 
-  // Zoekveld 
+  // Zoekveld
   const zoekInput = document.createElement('input');
   zoekInput.type = 'text';
   zoekInput.placeholder = 'Zoek op naam...';
   zoekInput.id = 'zoekveld';
   controls.appendChild(zoekInput);
 
-  // Functie om kaarten weer te geven
+
+  const typeSelect = document.createElement('select');
+  typeSelect.id = 'type-filter';
+
+  // Haal unieke types op
+  const alleTypes = new Set();
+  pokedex.forEach(p => p.types.forEach(t => alleTypes.add(t.type.name)));
+
+  // Voeg opties toe aan dropdown
+  const defaultOptie = document.createElement('option');
+  defaultOptie.value = '';
+  defaultOptie.textContent = 'Alle types';
+  typeSelect.appendChild(defaultOptie);
+
+  alleTypes.forEach(type => {
+    const optie = document.createElement('option');
+    optie.value = type;
+    optie.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+    typeSelect.appendChild(optie);
+  });
+
+  controls.appendChild(typeSelect);
+
+  // Toon kaarten
   function toonPokemonLijst(lijst) {
     container.innerHTML = '';
     lijst.forEach(p => {
@@ -41,20 +64,30 @@ document.addEventListener('DOMContentLoaded', async () => {
       kaart.innerHTML = `
         <h3>${p.name}</h3>
         <img src="${p.sprites.front_default}" alt="${p.name}">
+        <p>Type: ${p.types.map(t => t.type.name).join(', ')}</p>
       `;
 
       container.appendChild(kaart);
     });
   }
 
-  // Toon alle Pokémon 
+  function filterLijst() {
+    const zoekterm = zoekInput.value.toLowerCase();
+    const gekozenType = typeSelect.value;
+
+    const gefilterd = pokedex.filter(p => {
+      const naamMatcht = p.name.toLowerCase().includes(zoekterm);
+      const typeMatcht = gekozenType === '' || p.types.some(t => t.type.name === gekozenType);
+      return naamMatcht && typeMatcht;
+    });
+
+    toonPokemonLijst(gefilterd);
+  }
+
+  
   toonPokemonLijst(pokedex);
 
-  // Zoekfunctionaliteit
-  zoekInput.addEventListener('input', () => {
-    const zoekterm = zoekInput.value.toLowerCase();
-    const gefilterdePokemons = pokedex.filter(p => p.name.toLowerCase().includes(zoekterm));
-    toonPokemonLijst(gefilterdePokemons);
-  });
+  // Events
+  zoekInput.addEventListener('input', filterLijst);
+  typeSelect.addEventListener('change', filterLijst);
 });
-
