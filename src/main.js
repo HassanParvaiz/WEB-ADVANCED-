@@ -86,11 +86,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       const hartje = isFavoriet ? '❤️' : '🤍';
 
       kaart.innerHTML = `
-        <h3>${p.name}</h3>
-        <img src="${p.sprites.front_default}" alt="${p.name}">
-        <p>Type: ${p.types.map(t => t.type.name).join(', ')}</p>
-        <button class="favoriet-btn" data-naam="${p.name}">${hartje}</button>
+      <h3>${p.name}</h3>
+      <img src="${p.sprites.front_default}" alt="${p.name}">
+      <p><strong>Type:</strong> ${p.types.map(t => t.type.name).join(', ')}</p>
+      <p><strong>Hoogte:</strong> ${p.height / 10} m</p>
+      <p><strong>Gewicht:</strong> ${p.weight / 10} kg</p>
+      <p><strong>Abilities:</strong> ${p.abilities.map(a => a.ability.name).join(', ')}</p>
+      <p><strong>Base experience:</strong> ${p.base_experience}</p>
+      <p><strong>Order:</strong> ${p.order}</p>
+      <button class="favoriet-btn" data-naam="${p.name}">${hartje}</button>
       `;
+
 
       container.appendChild(kaart);
     });
