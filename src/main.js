@@ -64,6 +64,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   controls.appendChild(typeSelect);
 
+  // Sorteer dropdown
+  const sorteerSelect = document.createElement('select');
+  sorteerSelect.id = 'sorteer-opties';
+
+  const sorteerOpties = [
+    { value: '', label: 'Sorteer op...' },
+    { value: 'naam-az', label: 'Naam (A-Z)' },
+    { value: 'naam-za', label: 'Naam (Z-A)' },
+    { value: 'exp-oplopend', label: 'Base Exp (laag-hoog)' },
+    { value: 'exp-aflopend', label: 'Base Exp (hoog-laag)' },
+  ];
+
+  sorteerOpties.forEach(optie => {
+    const optieElement = document.createElement('option');
+    optieElement.value = optie.value;
+    optieElement.textContent = optie.label;
+    sorteerSelect.appendChild(optieElement);
+  });
+
+  controls.appendChild(sorteerSelect);
+
   // Checkbox 'Alleen favorieten'
   const checkbox = document.getElementById('toon-favorieten');
 
@@ -110,18 +131,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Filter functie
+  // Filter en sorteer functie
   function filterLijst() {
     const zoekterm = zoekInput.value.toLowerCase();
     const gekozenType = typeSelect.value;
     const toonEnkelFavorieten = checkbox.checked;
+    const sorteerWaarde = sorteerSelect.value;
 
-    const gefilterd = pokedex.filter(p => {
+    let gefilterd = pokedex.filter(p => {
       const naamMatcht = p.name.toLowerCase().includes(zoekterm);
       const typeMatcht = gekozenType === '' || p.types.some(t => t.type.name === gekozenType);
       const favorietMatcht = !toonEnkelFavorieten || favorieten.includes(p.name);
       return naamMatcht && typeMatcht && favorietMatcht;
     });
+
+    // Sorteer de gefilterde lijst
+    switch (sorteerWaarde) {
+      case 'naam-az':
+        gefilterd.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'naam-za':
+        gefilterd.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case 'exp-oplopend':
+        gefilterd.sort((a, b) => a.base_experience - b.base_experience);
+        break;
+      case 'exp-aflopend':
+        gefilterd.sort((a, b) => b.base_experience - a.base_experience);
+        break;
+    }
 
     toonPokemonLijst(gefilterd);
   }
@@ -133,28 +171,29 @@ document.addEventListener('DOMContentLoaded', async () => {
   zoekInput.addEventListener('input', filterLijst);
   typeSelect.addEventListener('change', filterLijst);
   checkbox.addEventListener('change', filterLijst);
+  sorteerSelect.addEventListener('change', filterLijst);
 });
 
 // Dark Mode
- const darkmodeToggle = document.getElementById('darkmode-toggle');
-  const body = document.body;
+const darkmodeToggle = document.getElementById('darkmode-toggle');
+const body = document.body;
 
-  function zetDarkMode(ingeschakeld) {
-    if (ingeschakeld) {
-      body.classList.add('dark-mode');
-      localStorage.setItem('darkmode', 'true');
-    } else {
-      body.classList.remove('dark-mode');
-      localStorage.setItem('darkmode', 'false');
-    }
+function zetDarkMode(ingeschakeld) {
+  if (ingeschakeld) {
+    body.classList.add('dark-mode');
+    localStorage.setItem('darkmode', 'true');
+  } else {
+    body.classList.remove('dark-mode');
+    localStorage.setItem('darkmode', 'false');
   }
+}
 
-  // Dark mode toestand laden bij opstart
-  const darkmodeVoorkeur = localStorage.getItem('darkmode') === 'true';
-  darkmodeToggle.checked = darkmodeVoorkeur;
-  zetDarkMode(darkmodeVoorkeur);
+// Dark mode toestand laden bij opstart
+const darkmodeVoorkeur = localStorage.getItem('darkmode') === 'true';
+darkmodeToggle.checked = darkmodeVoorkeur;
+zetDarkMode(darkmodeVoorkeur);
 
-  // Event listener voor de toggle
-  darkmodeToggle.addEventListener('change', () => {
-    zetDarkMode(darkmodeToggle.checked);
-  });
+// Event listener voor de toggle
+darkmodeToggle.addEventListener('change', () => {
+  zetDarkMode(darkmodeToggle.checked);
+});
