@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const pokedex = await haalPokemonDataOp();
   const container = document.getElementById('pokemon-container');
   const controls = document.getElementById('controls');
-  let favorieten = getFavorieten(); // Laad huidige favorieten
+  let favorieten = getFavorieten();
 
   // Zoekveld
   const zoekInput = document.createElement('input');
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   zoekInput.id = 'zoekveld';
   controls.appendChild(zoekInput);
 
-  // Type filter dropdown
+  // Type dropdown
   const typeSelect = document.createElement('select');
   typeSelect.id = 'type-filter';
 
@@ -64,7 +64,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   controls.appendChild(typeSelect);
 
-  // Favoriet toggle
+  // ✅ Checkbox 'Alleen favorieten'
+  const checkbox = document.getElementById('toon-favorieten');
+
+  // Toggle favoriet
   function toggleFavoriet(pokemonNaam) {
     if (favorieten.includes(pokemonNaam)) {
       favorieten = favorieten.filter(naam => naam !== pokemonNaam);
@@ -72,10 +75,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       favorieten.push(pokemonNaam);
     }
     setFavorieten(favorieten);
-    filterLijst(); // Herteken de lijst
+    filterLijst();
   }
 
-  // Toon kaarten
+  // Toon lijst
   function toonPokemonLijst(lijst) {
     container.innerHTML = '';
     lijst.forEach(p => {
@@ -86,22 +89,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       const hartje = isFavoriet ? '❤️' : '🤍';
 
       kaart.innerHTML = `
-      <h3>${p.name}</h3>
-      <img src="${p.sprites.front_default}" alt="${p.name}">
-      <p><strong>Type:</strong> ${p.types.map(t => t.type.name).join(', ')}</p>
-      <p><strong>Hoogte:</strong> ${p.height / 10} m</p>
-      <p><strong>Gewicht:</strong> ${p.weight / 10} kg</p>
-      <p><strong>Abilities:</strong> ${p.abilities.map(a => a.ability.name).join(', ')}</p>
-      <p><strong>Base experience:</strong> ${p.base_experience}</p>
-      <p><strong>Order:</strong> ${p.order}</p>
-      <button class="favoriet-btn" data-naam="${p.name}">${hartje}</button>
+        <h3>${p.name}</h3>
+        <img src="${p.sprites.front_default}" alt="${p.name}">
+        <p><strong>Type:</strong> ${p.types.map(t => t.type.name).join(', ')}</p>
+        <p><strong>Hoogte:</strong> ${p.height / 10} m</p>
+        <p><strong>Gewicht:</strong> ${p.weight / 10} kg</p>
+        <p><strong>Abilities:</strong> ${p.abilities.map(a => a.ability.name).join(', ')}</p>
+        <p><strong>Base experience:</strong> ${p.base_experience}</p>
+        <p><strong>Order:</strong> ${p.order}</p>
+        <button class="favoriet-btn" data-naam="${p.name}">${hartje}</button>
       `;
-
-
       container.appendChild(kaart);
     });
 
-    // Koppel events aan hartjes
     document.querySelectorAll('.favoriet-btn').forEach(knop => {
       knop.addEventListener('click', (e) => {
         const naam = e.target.getAttribute('data-naam');
@@ -110,23 +110,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // Filter functie
   function filterLijst() {
     const zoekterm = zoekInput.value.toLowerCase();
     const gekozenType = typeSelect.value;
+    const toonEnkelFavorieten = checkbox.checked;
 
     const gefilterd = pokedex.filter(p => {
       const naamMatcht = p.name.toLowerCase().includes(zoekterm);
       const typeMatcht = gekozenType === '' || p.types.some(t => t.type.name === gekozenType);
-      return naamMatcht && typeMatcht;
+      const favorietMatcht = !toonEnkelFavorieten || favorieten.includes(p.name);
+      return naamMatcht && typeMatcht && favorietMatcht;
     });
 
     toonPokemonLijst(gefilterd);
   }
 
-  // Toon de initiële lijst
+  // Toon initieel
   toonPokemonLijst(pokedex);
 
-  // Events
+  // Event listeners
   zoekInput.addEventListener('input', filterLijst);
   typeSelect.addEventListener('change', filterLijst);
+  checkbox.addEventListener('change', filterLijst);
 });
