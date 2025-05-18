@@ -1,11 +1,11 @@
 const API_URL = 'https://pokeapi.co/api/v2/pokemon?offset=100&limit=20';
 
-// ⬇️ Favorieten ophalen uit localStorage
+//  Favorieten ophalen uit localStorage
 function getFavorieten() {
   return JSON.parse(localStorage.getItem('favorieten')) || [];
 }
 
-// ⬆️ Favorieten opslaan
+// Favorieten opslaan
 function setFavorieten(favorieten) {
   localStorage.setItem('favorieten', JSON.stringify(favorieten));
 }
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   controls.appendChild(typeSelect);
 
-  // ✅ Checkbox 'Alleen favorieten'
+  // Checkbox 'Alleen favorieten'
   const checkbox = document.getElementById('toon-favorieten');
 
   // Toggle favoriet
@@ -134,3 +134,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   typeSelect.addEventListener('change', filterLijst);
   checkbox.addEventListener('change', filterLijst);
 });
+
+// Dark Mode
+ const darkmodeToggle = document.getElementById('darkmode-toggle');
+  const body = document.body;
+
+  function zetDarkMode(ingeschakeld) {
+    if (ingeschakeld) {
+      body.classList.add('dark-mode');
+      localStorage.setItem('darkmode', 'true');
+    } else {
+      body.classList.remove('dark-mode');
+      localStorage.setItem('darkmode', 'false');
+    }
+  }
+
+  // Dark mode toestand laden bij opstart
+  const darkmodeVoorkeur = localStorage.getItem('darkmode') === 'true';
+  darkmodeToggle.checked = darkmodeVoorkeur;
+  zetDarkMode(darkmodeVoorkeur);
+
+  // Event listener voor de toggle
+  darkmodeToggle.addEventListener('change', () => {
+    zetDarkMode(darkmodeToggle.checked);
+  });

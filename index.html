@@ -1,34 +1,42 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pokémon SPA</title>
-    <link rel="stylesheet" href="/src/style.css" />
-  </head>
-  <body>
-    <header>
-      <h1>Pokémon Explorer</h1>
-    </header>
 
-    <main>
-      <section id="controls">
-        <label>
-          <input type="checkbox" id="toon-favorieten" />
-          Alleen favorieten
-        </label>
-      </section>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pokémon SPA</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
 
-      <section id="pokemon-container" class="grid-container">
-        <!-- Pokémon kaarten worden hier weergegeven -->
-      </section>
-    </main>
+<body>
+  <header>
+    <h1>Pokémon Explorer</h1>
+  </header>
 
-    <footer>
-      <p>&copy; 2025 Pokémon SPA Project</p>
-    </footer>
+  <main>
+    <section id="controls">
+      <label>
+        <input type="checkbox" id="toon-favorieten" />
+        Alleen favorieten
+      </label>
 
-    <script type="module" src="/src/main.js"></script>
-  </body>
+      <label>
+        <input type="checkbox" id="darkmode-toggle" />
+        Donkere modus
+      </label>
+    </section>
+
+    <section id="pokemon-container" class="grid-container">
+      <!-- Pokémon kaarten worden hier weergegeven -->
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Pokémon SPA Project</p>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
 </html>
