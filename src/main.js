@@ -98,15 +98,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }, { threshold: 0.1 });
 
-  // Toggle favoriet
-  function toggleFavoriet(pokemonNaam) {
+  // Toggle favoriet — alleen knop wijzigen
+  function toggleFavoriet(pokemonNaam, knopElement) {
     if (favorieten.includes(pokemonNaam)) {
       favorieten = favorieten.filter(naam => naam !== pokemonNaam);
+      knopElement.textContent = '🤍';
     } else {
       favorieten.push(pokemonNaam);
+      knopElement.textContent = '❤️';
     }
     setFavorieten(favorieten);
-    filterLijst();
   }
 
   // Toon lijst met animatie observer
@@ -128,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <p><strong>Abilities:</strong> ${p.abilities.map(a => a.ability.name).join(', ')}</p>
         <p><strong>Base experience:</strong> ${p.base_experience}</p>
         <p><strong>Order:</strong> ${p.order}</p>
-        <button class="favoriet-btn" data-naam="${p.name}">${hartje}</button>
+        <button type="button" class="favoriet-btn" data-naam="${p.name}">${hartje}</button>
       `;
       container.appendChild(kaart);
 
@@ -138,8 +139,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.querySelectorAll('.favoriet-btn').forEach(knop => {
       knop.addEventListener('click', (e) => {
-        const naam = e.target.getAttribute('data-naam');
-        toggleFavoriet(naam);
+        const knopElement = e.target;
+        const naam = knopElement.getAttribute('data-naam');
+        toggleFavoriet(naam, knopElement);
       });
     });
   }
@@ -158,7 +160,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       return naamMatcht && typeMatcht && favorietMatcht;
     });
 
-    // Sorteer de gefilterde lijst
     switch (sorteerWaarde) {
       case 'naam-az':
         gefilterd.sort((a, b) => a.name.localeCompare(b.name));
@@ -201,12 +202,10 @@ function zetDarkMode(ingeschakeld) {
   }
 }
 
-// Dark mode toestand laden bij opstart
 const darkmodeVoorkeur = localStorage.getItem('darkmode') === 'true';
 darkmodeToggle.checked = darkmodeVoorkeur;
 zetDarkMode(darkmodeVoorkeur);
 
-// Event listener voor de toggle
 darkmodeToggle.addEventListener('change', () => {
   zetDarkMode(darkmodeToggle.checked);
 });
