@@ -74,6 +74,16 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  /* Animatie startwaardes */
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.pokemon-kaart.animatie-start {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .pokemon-kaart:hover {

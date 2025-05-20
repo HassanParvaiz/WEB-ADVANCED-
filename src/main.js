@@ -1,6 +1,6 @@
 const API_URL = 'https://pokeapi.co/api/v2/pokemon?offset=100&limit=20';
 
-//  Favorieten ophalen uit localStorage
+// Favorieten ophalen uit localStorage
 function getFavorieten() {
   return JSON.parse(localStorage.getItem('favorieten')) || [];
 }
@@ -88,6 +88,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Checkbox 'Alleen favorieten'
   const checkbox = document.getElementById('toon-favorieten');
 
+  // Intersection Observer voor animaties
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animatie-start');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
   // Toggle favoriet
   function toggleFavoriet(pokemonNaam) {
     if (favorieten.includes(pokemonNaam)) {
@@ -99,7 +109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     filterLijst();
   }
 
-  // Toon lijst
+  // Toon lijst met animatie observer
   function toonPokemonLijst(lijst) {
     container.innerHTML = '';
     lijst.forEach(p => {
@@ -121,6 +131,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         <button class="favoriet-btn" data-naam="${p.name}">${hartje}</button>
       `;
       container.appendChild(kaart);
+
+      // Voeg toe aan observer voor animatie
+      observer.observe(kaart);
     });
 
     document.querySelectorAll('.favoriet-btn').forEach(knop => {
