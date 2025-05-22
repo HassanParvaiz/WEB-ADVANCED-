@@ -66,4 +66,6 @@ Screenshots
 Technologieën
 - Fetch API data ophalen
 - LocalStorage voor favorieten en het behouden van donkermodus
+- Chatgpt gebruikt voor hulp en advies
 - Pokemon API  https://pokeapi.co/api/v2/pokemon/ditto
+  
