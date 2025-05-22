@@ -39,21 +39,42 @@ main {
   justify-content: center;
 }
 
+/* Uniforme stijl voor alle control-elementen */
 #controls input[type="text"],
-#controls select {
+#controls select,
+#controls label {
   padding: 0.5rem 0.75rem;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 6px;
   min-width: 180px;
   max-width: 250px;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, background-color 0.3s;
+  background-color: white;
+}
+
+/* Checkbox specifiek */
+#controls label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+#controls label:hover {
+  border-color: #ef5350;
 }
 
 #controls input[type="text"]:focus,
 #controls select:focus {
   outline: none;
   border-color: #ef5350;
+}
+
+#controls input[type="checkbox"] {
+  accent-color: #ef5350;
+  transform: scale(1.2);
+  cursor: pointer;
 }
 
 /* Grid container voor Pokémon kaarten */
@@ -136,13 +157,13 @@ footer p {
   }
 
   #controls input[type="text"],
-  #controls select {
+  #controls select,
+  #controls label {
     max-width: 100%;
   }
 }
 
-/* Dark Mode*/
-
+/* Dark Mode */
 body.dark-mode {
   background-color: #121212;
   color: #f0f0f0;
@@ -155,15 +176,21 @@ body.dark-mode footer {
 }
 
 body.dark-mode #controls input[type="text"],
-body.dark-mode #controls select {
+body.dark-mode #controls select,
+body.dark-mode #controls label {
   background-color: #1e1e1e;
   color: #f0f0f0;
   border-color: #555;
 }
 
 body.dark-mode #controls input[type="text"]:focus,
-body.dark-mode #controls select:focus {
+body.dark-mode #controls select:focus,
+body.dark-mode #controls label:hover {
   border-color: #ff6b6b;
+}
+
+body.dark-mode #controls input[type="checkbox"] {
+  accent-color: #ff6b6b;
 }
 
 body.dark-mode .pokemon-kaart {
